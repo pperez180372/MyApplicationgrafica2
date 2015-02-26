@@ -30,8 +30,8 @@ public class MainActivity extends ActionBarActivity {
         canvas.drawRect(50, 50, 200, 200, paint);
         FrameLayout ll = (FrameLayout) findViewById(R.id.Grafica);
         ll.setBackgroundDrawable(new BitmapDrawable(bg));
-
     }
+
     public class MyView extends View {
         public MyView(Context context) {
             super(context);
