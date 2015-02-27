@@ -15,19 +15,45 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ScrollView;
 
+import com.imgtec.flow.Flow;
+import com.imgtec.flow.client.core.Client;
+import com.imgtec.flow.client.core.Core;
+import com.imgtec.flow.client.core.Setting;
+import com.imgtec.flow.client.core.Settings;
+import com.imgtec.flow.client.flowmessaging.FlowMessagingAddress;
+import com.imgtec.flow.client.users.Device;
 
 public class MainActivity extends ActionBarActivity {
 
-  //  int [] buffer=new int[1024];
-    int puntero_vector=0;
+    //  int [] buffer=new int[1024];
+    /*int puntero_vector=0;
     Canvas grafica;
-    Paint paint;
+    Paint paint;*/
 
-    void imprimir(String cad)
-    {
-        TextView ll = (TextView) findViewById(R.id.TextViewEstado);
-        ll.append(cad);
+    static {
+        System.loadLibrary("flowcore");
+        System.loadLibrary("flowsip");
+        System.loadLibrary("flow");
+
+    }
+
+    synchronized void imprimir(final String cad) {
+        final String g = cad;
+
+        runOnUiThread(new Runnable() {
+            public void run() {
+                TextView ll = (TextView) findViewById(R.id.TextViewEstado);
+                ll.append(cad);
+                ScrollView ll1 = (ScrollView) findViewById(R.id.ScrollViewEstado);
+                ll1.fullScroll(View.FOCUS_DOWN);
+
+            }
+        });
+    }
+    void imprimirln(final String cad) {
+        imprimir(cad+"\r\n");
     }
 
     @Override
@@ -36,27 +62,24 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         /* crea el canvas para poder dibujar la gráfica */
-
+/*
         paint = new Paint();
         paint.setColor(Color.parseColor("#CD5C5C"));
         Bitmap bg = Bitmap.createBitmap(480, 800, Bitmap.Config.ARGB_8888);
         grafica = new Canvas(bg);
         FrameLayout ll = (FrameLayout) findViewById(R.id.Grafica);
         ll.setBackgroundDrawable(new BitmapDrawable(bg));
+*/
+        // imprimir("Hola Cha");
 
-        imprimir("Hola Chacho");
 
-
-        /* crear un hilo para registrarse */
+        // crear un hilo para registrarse
         new Thread(new Runnable() {
             public void run() {
 
-                imprimir("Hilo de Registro");
-                if (BuildConfig.DEBUG) {
-                    Log.d("per.com", "Hilo de registro");
-                }
+                   /* registro1*/
 
-               /* String FLOW_SERVER_URL="http://ws-uat.flowworld.com";
+                String FLOW_SERVER_URL="http://ws-uat.flowworld.com";
                 String FLOW_SERVER_KEY="Ph3bY5kkU4P6vmtT";
                 String FLOW_SERVER_SECRET="Sd1SVBfYtGfQvUCR";
 
@@ -67,73 +90,53 @@ public class MainActivity extends ActionBarActivity {
                 String softwareVersion 			= "40";
                 String deviceName 				= "XXPascualetAndroid";
                 String DeviceRegistrationKey 	= "NXAYIMLCGH";
-                if (BuildConfig.DEBUG) {
-                    Log.d("per.com", "Pascual está aquí");
-                }
-*/
-                boolean result = false;
-                return;
 
-                /*result = initFlowCore();
+                  boolean result = false;
+
+                result = initFlowCore();
                 if (result) {
-                    result = setServerDetails(server, oAuth, secret);
+                    result = setServerDetails(FLOW_SERVER_URL, FLOW_SERVER_KEY, FLOW_SERVER_SECRET);
                 }
+
                 if (result) {
                     result = registerDevice(hardwareType, macAddress, serialNumber,deviceId , softwareVersion, deviceName, DeviceRegistrationKey);
                 }
 
-                if (result) {
-                    System.out.println("Device registration succeeded");
-                } else {
-                    System.out.println("Device registration failed");
-                }
-                if (result) {
-                    result = getDeviceSettings();
-                }
 
-                if (result) {
-                    System.out.println("Settings retrieval succeeded");
-                } else {
-                    System.out.println("Settings retrieval failed");
-                }
                 if (result) {
                     result = getDeviceAoR();
                 }
 
-                if (result) {
-                    System.out.println("AoR retrieval succeeded");
-                } else {
-                    System.out.println("AoR retrieval failed");
-                }
-
-*/
-                //System.out.println("Fin del Hilo");
 
 
             }
-        });
-        /* crear un hilo que invoque a nuevamuestra para representar */
-       /* new Thread(new Runnable() {
-            public void run() {
-                imprimir("Hilo de dibujo Arrancado");
-                if (BuildConfig.DEBUG) {
-                    Log.d("per.com", "Hilo de creación de muestras");
-                }
+        }
+        ).start();
 
-                    nuevamuestra(45);
+
+
+
+        // crear un hilo que invoque a nuevamuestra para representar
+        new Thread(new Runnable() {
+            public void run() {int x=0;
+                imprimir("Hilo de dibujo Arrancado\r\n");
+
+              /*  while(true){// nuevamuestra(45);
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                    imprimir(""+x+"Hilo de dibujo Arrancado\r\n");
+                x++;
+                }*/
             }
-        });
-*/
+        }).start();
 
 
-    }
 
-  /*   void nuevamuestra(int dato)
+/*
+     void nuevamuestra(int dato)
      {
          //buffer[puntero_vector++]=dato;
          if (puntero_vector==1024) puntero_vector=0;
@@ -143,7 +146,7 @@ public class MainActivity extends ActionBarActivity {
 
      }
 */
-
+}
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -168,7 +171,7 @@ public class MainActivity extends ActionBarActivity {
 
 
     /// Flow core
-/*
+
     boolean initFlowCore() {
 
 
@@ -183,8 +186,11 @@ public class MainActivity extends ActionBarActivity {
             result = false;
         }
         if (!result) {
-            System.out.println("FlowCore Init failed");
+            imprimirln("FlowCore Init failed");
         }
+        else
+            imprimirln("FlowCore Init Success");
+
         return result;
     }
 
@@ -202,8 +208,11 @@ public class MainActivity extends ActionBarActivity {
             result = false;
         }
         if (!result) {
-            System.out.println("FlowCore setServer failed");
+            imprimirln("FlowCore setServer failed");
         }
+        else
+            imprimirln("FlowCore setServer works!");
+
         return result;
     }
 
@@ -217,41 +226,18 @@ public class MainActivity extends ActionBarActivity {
             Client cli = Core.getDefaultClient();
             cli.loginAsDevice(hardwareType, macAddress, serialNumber, deviceId, softwareVersion, deviceName, DeviceRegistrationKey);
             cli.getLoggedInDevice();
+            imprimirln("Device registered");
             result=true;
         } catch (Exception e) {
             System.err.println(e.getMessage());
+            imprimirln("Error in Device registration");
             result = false;
         }
 
         return result;
     }
 
-    boolean getDeviceSettings() {
 
-        boolean result = true;
-        try {
-            Device device = Core.getDefaultClient().getLoggedInDevice();
-            if (device.hasSettings()) {
-                Settings deviceSettings = device.getSettings();
-                System.out.println("\n--Device settings list\n");
-                for (int index = 0; index < deviceSettings.size(); index++) {
-                    Setting setting = deviceSettings.get(index);
-                    if (setting.hasKey() && setting.hasValue()) {
-                        String key = setting.getKey();
-                        String value = setting.getValue();
-                        System.out.println(index+": Key = "+key+"  Value = "+value);
-                    }
-                }
-            } else {
-                System.out.println("Device has not settings root");
-                result = false;
-            }
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-            result = false;
-        }
-        return result;
-    }
 
     boolean getDeviceAoR() {
 
@@ -262,12 +248,12 @@ public class MainActivity extends ActionBarActivity {
                 FlowMessagingAddress addr = device.getFlowMessagingAddress();
                 if (addr != null) {
                     String aor = addr.getAddress();
-                    System.out.println("Device AoR: "+ aor);
+                    imprimirln("Device AoR: "+ aor);
                 } else {
                     result = false;
                 }
             } else {
-                System.out.println("Device has no AoR");
+                imprimirln("Device has no AoR");
                 result = false;
             }
         } catch (Exception e) {
@@ -277,5 +263,5 @@ public class MainActivity extends ActionBarActivity {
         return result;
     }
 
-*/
+
 }
