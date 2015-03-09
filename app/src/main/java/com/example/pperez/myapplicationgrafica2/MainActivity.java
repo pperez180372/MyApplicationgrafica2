@@ -1,36 +1,31 @@
 package com.example.pperez.myapplicationgrafica2;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
-import com.imgtec.flow.Flow;
 import com.imgtec.flow.client.core.Client;
 import com.imgtec.flow.client.core.Core;
-import com.imgtec.flow.client.core.Setting;
-import com.imgtec.flow.client.core.Settings;
 import com.imgtec.flow.client.flowmessaging.FlowMessagingAddress;
 import com.imgtec.flow.client.users.Device;
 
+
 public class MainActivity extends ActionBarActivity {
 
-    //  int [] buffer=new int[1024];
-    /*int puntero_vector=0;
+      int [] buffer=new int[1024];
+    int puntero_vector=0;
     Canvas grafica;
-    Paint paint;*/
+    Paint paint;
 
     static {
         System.loadLibrary("flowcore");
@@ -62,14 +57,15 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         /* crea el canvas para poder dibujar la gráfica */
-/*
+
         paint = new Paint();
         paint.setColor(Color.parseColor("#CD5C5C"));
         Bitmap bg = Bitmap.createBitmap(480, 800, Bitmap.Config.ARGB_8888);
         grafica = new Canvas(bg);
         FrameLayout ll = (FrameLayout) findViewById(R.id.Grafica);
         ll.setBackgroundDrawable(new BitmapDrawable(bg));
-*/
+
+
         // imprimir("Hola Cha");
 
 
@@ -121,32 +117,46 @@ public class MainActivity extends ActionBarActivity {
             public void run() {int x=0;
                 imprimir("Hilo de dibujo Arrancado\r\n");
 
-              /*  while(true){// nuevamuestra(45);
+                while(true){ nuevamuestra(x+45);
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                    imprimir(""+x+"Hilo de dibujo Arrancado\r\n");
+
                 x++;
-                }*/
+                }
             }
         }).start();
 
+    }
 
 
-/*
-     void nuevamuestra(int dato)
+     public void nuevamuestra(int dato)
      {
-         //buffer[puntero_vector++]=dato;
+         buffer[puntero_vector++]=dato;
          if (puntero_vector==1024) puntero_vector=0;
 
-         grafica.drawRect(puntero_vector, 50, 10,10, paint);
+         grafica.drawRect(puntero_vector, dato, puntero_vector+10,dato+10, paint);
+
+         imprimirln("nueva muestra "+puntero_vector+","+dato);
+
+         runOnUiThread(new Runnable() {
+             public void run() {
+                 FrameLayout ll = (FrameLayout) findViewById(R.id.Grafica);
+
+                 ll.invalidate();
+
+             }
+         });
+
+
+
 
 
      }
-*/
-}
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
