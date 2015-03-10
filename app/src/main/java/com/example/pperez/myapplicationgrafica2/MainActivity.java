@@ -22,10 +22,13 @@ import com.imgtec.flow.client.users.Device;
 
 public class MainActivity extends ActionBarActivity {
 
-      int [] buffer=new int[1024];
+      int [] buffer=new int[4096];
     int puntero_vector=0;
     Canvas grafica;
-    Paint paint;
+    Paint paintred;
+    Paint paintwhite;
+
+    int mx,Mx,my,My;
 
     static {
         System.loadLibrary("flowcore");
@@ -58,13 +61,21 @@ public class MainActivity extends ActionBarActivity {
 
         /* crea el canvas para poder dibujar la gráfica */
 
-        paint = new Paint();
-        paint.setColor(Color.parseColor("#CD5C5C"));
+        paintred = new Paint();
+        paintred.setColor(Color.parseColor("#CD5C5C"));
+        paintwhite = new Paint();
+        paintwhite.setColor(Color.parseColor("#FFFFFF"));
+
+
         Bitmap bg = Bitmap.createBitmap(480, 800, Bitmap.Config.ARGB_8888);
         grafica = new Canvas(bg);
         FrameLayout ll = (FrameLayout) findViewById(R.id.Grafica);
         ll.setBackgroundDrawable(new BitmapDrawable(bg));
 
+        my=15; // temperatura minima;
+        My=40; //temperatura máxima;
+        mx=0;  // tiempo minimo; en segundos // dependerá del numero de muestras
+        Mx=3600;
 
         // imprimir("Hola Cha");
 
@@ -109,15 +120,12 @@ public class MainActivity extends ActionBarActivity {
         }
         ).start();
 
-
-
-
         // crear un hilo que invoque a nuevamuestra para representar
         new Thread(new Runnable() {
             public void run() {int x=0;
                 imprimir("Hilo de dibujo Arrancado\r\n");
 
-                while(true){ nuevamuestra(x+45);
+                while(true){ nuevamuestra((int) (25.0+10.0*Math.sin((float)(x%360)/360.0)));
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
@@ -128,18 +136,41 @@ public class MainActivity extends ActionBarActivity {
                 }
             }
         }).start();
-
     }
 
 
      public void nuevamuestra(int dato)
      {
+         int w,h;
+
+         FrameLayout ll = (FrameLayout) findViewById(R.id.Grafica);
+         w=ll.getWidth();
+         h=ll.getHeight();
+
+            // borrar
+         grafica.drawRect(0,0,w,h, paintwhite);
+
+         //añadir dato
          buffer[puntero_vector++]=dato;
-         if (puntero_vector==1024) puntero_vector=0;
+         if ((puntero_vector>=h)||(puntero_vector>=4096)) puntero_vector=0;
+         // grafica de lineas no se escala la x
+         int t;
+         float sy=h/(My-my);
+         for (t=0;t<w-1;t++)
+         {
+            int va,va1;
+             va=buffer[t];
+             if (va>My) va=My;
+             if (va<my) va=my;
+             va1=buffer[t+1];
+             if (va1>My) va1=My;
+             if (va1<my) va1=my;
+             grafica.drawLine(t,h-va*sy,t+1,h-va1*sy, paintwhite);
 
-         grafica.drawRect(puntero_vector, dato, puntero_vector+10,dato+10, paint);
+         }
 
-         imprimirln("nueva muestra "+puntero_vector+","+dato);
+
+
 
          runOnUiThread(new Runnable() {
              public void run() {
