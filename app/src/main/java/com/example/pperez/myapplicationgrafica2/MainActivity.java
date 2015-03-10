@@ -19,10 +19,13 @@ import com.imgtec.flow.client.core.Core;
 import com.imgtec.flow.client.flowmessaging.FlowMessagingAddress;
 import com.imgtec.flow.client.users.Device;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 public class MainActivity extends ActionBarActivity {
 
-      int [] buffer=new int[4096];
+      int [] buffer=new int[3600];
     int puntero_vector=0;
     Canvas grafica;
     Paint paintred;
@@ -100,6 +103,11 @@ public class MainActivity extends ActionBarActivity {
 
                   boolean result = false;
 
+
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+                String cad =sdf.format(new Date());
+                imprimirln("Ejecución: "+cad);
+
                 result = initFlowCore();
                 if (result) {
                     result = setServerDetails(FLOW_SERVER_URL, FLOW_SERVER_KEY, FLOW_SERVER_SECRET);
@@ -141,22 +149,24 @@ public class MainActivity extends ActionBarActivity {
 
      public void nuevamuestra(int dato)
      {
-         int w,h;
+  /*       int w,h;
 
-         FrameLayout ll = (FrameLayout) findViewById(R.id.Grafica);
+
+         /*FrameLayout ll = (FrameLayout) findViewById(R.id.Grafica);
          w=ll.getWidth();
          h=ll.getHeight();
-
-            // borrar
-         grafica.drawRect(0,0,w,h, paintwhite);
+*/
+            // borrar esta escalado.
+         grafica.drawRect(0, 0, 480, 800, paintwhite);
+         float sy= (float) (800.0/(My-my)); // en grados
+         float sx=(float) 480.0/(Mx-mx);   // en segundos
 
          //añadir dato
          buffer[puntero_vector++]=dato;
-         if ((puntero_vector>=h)||(puntero_vector>=4096)) puntero_vector=0;
+         if ((puntero_vector>=3600)) puntero_vector=0;
          // grafica de lineas no se escala la x
          int t;
-         float sy=h/(My-my);
-         for (t=0;t<w-1;t++)
+         for (t=0;t<3600;t++)
          {
             int va,va1;
              va=buffer[t];
@@ -165,7 +175,7 @@ public class MainActivity extends ActionBarActivity {
              va1=buffer[t+1];
              if (va1>My) va1=My;
              if (va1<my) va1=my;
-             grafica.drawLine(t,h-va*sy,t+1,h-va1*sy, paintwhite);
+             grafica.drawLine(t*sx,480-va*sy,(t+1)*sx,480-va1*sy, paintred);
 
          }
 
