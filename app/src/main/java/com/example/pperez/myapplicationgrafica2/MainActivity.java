@@ -25,7 +25,7 @@ import java.util.Date;
 
 public class MainActivity extends ActionBarActivity {
 
-      int [] buffer=new int[3600];
+      float [] buffer=new float[3600];
     int puntero_vector=0;
     Canvas grafica;
     Paint paintred;
@@ -133,9 +133,9 @@ public class MainActivity extends ActionBarActivity {
             public void run() {int x=0;
                 imprimir("Hilo de dibujo Arrancado\r\n");
 
-                while(true){ nuevamuestra((int) (25.0+10.0*Math.sin((float)(x%360)/360.0)));
+                while(true){ nuevamuestra((float) (25.0+10.0*Math.sin(2.0*Math.PI*(float)(x%360)/360.0)));
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -147,7 +147,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
-     public void nuevamuestra(int dato)
+     public void nuevamuestra(float dato)
      {
   /*       int w,h;
 
@@ -166,16 +166,23 @@ public class MainActivity extends ActionBarActivity {
          if ((puntero_vector>=3600)) puntero_vector=0;
          // grafica de lineas no se escala la x
          int t;
-         for (t=0;t<3600;t++)
+         for (t=0;t<3600-1;t++)
          {
-            int va,va1;
+            float va,va1;
              va=buffer[t];
              if (va>My) va=My;
              if (va<my) va=my;
              va1=buffer[t+1];
              if (va1>My) va1=My;
              if (va1<my) va1=my;
-             grafica.drawLine(t*sx,480-va*sy,(t+1)*sx,480-va1*sy, paintred);
+             float x1,y1,x2,y2;
+
+             x1=t*sx;
+             y1=800-(va-my)*sy;
+             x2=(t+1)*sx;
+             y2=800-(va1-my)*sy;
+
+             grafica.drawLine(x1,y1,x2,y2, paintred);
 
          }
 
@@ -186,7 +193,7 @@ public class MainActivity extends ActionBarActivity {
              public void run() {
                  FrameLayout ll = (FrameLayout) findViewById(R.id.Grafica);
 
-                 ll.invalidate();
+                 ll.postInvalidate();
 
              }
          });
