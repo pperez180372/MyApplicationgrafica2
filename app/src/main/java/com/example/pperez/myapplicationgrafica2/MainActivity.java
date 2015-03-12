@@ -17,7 +17,16 @@ import android.widget.TextView;
 import com.imgtec.flow.client.core.Client;
 import com.imgtec.flow.client.core.Core;
 import com.imgtec.flow.client.flowmessaging.FlowMessagingAddress;
+import com.imgtec.flow.client.users.DataStore;
 import com.imgtec.flow.client.users.Device;
+import com.imgtec.flow.client.users.User;
+import com.imgtec.flow.client.core.Setting;
+import com.imgtec.flow.client.core.Settings;
+import com.imgtec.flow.client.core.SettingsHelper;
+import com.imgtec.flow.client.core.SettingHelper;
+
+
+
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -135,6 +144,24 @@ public class MainActivity extends ActionBarActivity {
                     result = getDeviceAoR();
                 }
 
+                if (result)
+                {
+                    result=createDeviceDataStore("almacenamiento_1");
+                }
+
+                if (result) {
+                    result=createDataStore("ALMACENAMIENTO_USUARIO");
+                }
+
+                if (result) {
+                    result = storeKeyValue("CLAVE", "SOL"); //key, value
+                }
+                if (result) {
+                    result = retrieveKeyValue("CLAVE");
+                }
+                /*if (result) {
+                    result = removeKeyValueEntry(key);
+                }*/
 
 
             }
@@ -148,7 +175,7 @@ public class MainActivity extends ActionBarActivity {
 
                 while(true){ nuevamuestra((float) (Math.random()*10.0+25.0+10.0*Math.sin(2.0*Math.PI*(float)(x%360)/360.0)));
                 try {
-                    Thread.sleep(10);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -185,7 +212,7 @@ public class MainActivity extends ActionBarActivity {
          buffer[puntero_vector++]=dato;
          if ((puntero_vector>=3600))
          {
-                imprimirln("Ha finalidado el la peusta de datos");
+                //imprimirln("Ha finalidado el la peusta de datos");
                 puntero_vector=0;
          }
 
@@ -356,6 +383,140 @@ public class MainActivity extends ActionBarActivity {
         }
         return result;
     }
+
+
+
+    public boolean createDeviceDataStore(String newDataStoreName) {
+
+        boolean result = false;
+
+        try {
+            Device device = Core.getDefaultClient().getLoggedInDevice();
+            String dataStoreName = newDataStoreName;
+            DataStore dataStore = device.getDataStore(dataStoreName);
+            if (dataStore != null) {
+                imprimirln("La base de datos: \""+newDataStoreName+"\" se ha creado con exito");
+
+                result = true;
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+
+
+            result = false;
+        }
+
+        if (!result) {
+            imprimirln("La base de datos: \""+newDataStoreName+"\" NO se ha podido crear");
+        }
+        return result;
+    }
+
+
+
+    public boolean createDataStore(String dataStoreName) {
+
+        boolean result = false;
+
+        try {
+            User user = Core.getDefaultClient().getLoggedInUser();
+            DataStore myDataStore= user.getDataStore(dataStoreName);
+            if (myDataStore != null){
+                result = true;
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            result = false;
+        }
+
+        if (!result) {
+            imprimirln("La base de datos de USUARIO: \""+dataStoreName+"\" NO se ha podido crear");
+        }
+        else
+            imprimirln("La base de datos de USUARIO: \""+dataStoreName+"\" se ha creado con exito");
+        return result;
+    }
+
+    public boolean storeKeyValue(String key, String value) {
+
+        boolean result = true;
+        try {
+            User user = Core.getDefaultClient().getLoggedInUser();
+            if (user.hasSettings()) {
+                Setting newEntry = SettingHelper.newSetting(Core.getDefaultClient());
+                newEntry.setKey(key);
+                newEntry.setValue(value);
+
+                Settings newSettings = SettingsHelper.newSettings(Core.getDefaultClient());
+                newSettings.add(newEntry);
+
+                user.getSettings().doAdd(newSettings);
+            } else {
+                imprimirln("User has not settings");
+                result = false;
+            }
+        } catch (Exception e) {
+            System.err.println("EXCEPTION PASUCLA");
+            System.err.println(e.getMessage());
+            result = false;
+        }
+        if (!result) {
+            imprimirln("FlowCore storing key-value failed");
+        }
+        return result;
+
+    }
+
+
+     public boolean retrieveKeyValue(String key) {
+
+        boolean result = true;
+        try {
+            User user = Core.getDefaultClient().getLoggedInUser();
+            if (user.hasSettings()) {
+                Setting setting = user.getSetting(key);
+                String value = setting.getValue();
+                imprimirln("Retrieved Value: "+value);
+            } else {
+                imprimirln("User has no settings");
+                result = false;
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            result = false;
+        }
+        if (!result) {
+            imprimirln("FlowCore retrieval of key-value failed");
+        }
+        return result;
+
+    }
+
+
+    public boolean removeKeyValueEntry(String key){
+
+        boolean result = true;
+        try {
+            User user = Core.getDefaultClient().getLoggedInUser();
+            if (user.hasSettings()) {
+                Settings userSettings = user.getSettings();
+                userSettings.removeSetting(key);
+            } else {
+                imprimirln("ERROR: User has no settings root");
+                result = false;
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            result = false;
+        }
+        if (!result) {
+            imprimirln("FlowCore key-value deletion failed");
+        }
+        return result;
+
+    }
+
+
 
 
 }
