@@ -27,9 +27,16 @@ public class MainActivity extends ActionBarActivity {
 
       float [] buffer=new float[3600];
     int puntero_vector=0;
-    Canvas grafica;
+    Canvas grafica_1;
+    Canvas grafica_2;
+    int canvas_visible;
+
+
     Paint paintred;
     Paint paintwhite;
+    BitmapDrawable BitmapD_1;
+    BitmapDrawable BitmapD_2;
+
 
     int mx,Mx,my,My;
 
@@ -70,10 +77,16 @@ public class MainActivity extends ActionBarActivity {
         paintwhite.setColor(Color.parseColor("#FFFFFF"));
 
 
-        Bitmap bg = Bitmap.createBitmap(480, 800, Bitmap.Config.ARGB_8888);
-        grafica = new Canvas(bg);
+        Bitmap bg_1 = Bitmap.createBitmap(480, 800, Bitmap.Config.ARGB_8888);
+        Bitmap bg_2 = Bitmap.createBitmap(480, 800, Bitmap.Config.ARGB_8888);
+        grafica_1 = new Canvas(bg_1);
+        grafica_2 = new Canvas(bg_2);
+        BitmapD_1=new BitmapDrawable(getResources(),bg_1);
+        BitmapD_2=new BitmapDrawable(getResources(),bg_2);
+        canvas_visible=1;
         FrameLayout ll = (FrameLayout) findViewById(R.id.Grafica);
-        ll.setBackgroundDrawable(new BitmapDrawable(bg));
+        ll.setBackgroundDrawable(BitmapD_1);
+
 
         my=15; // temperatura minima;
         My=40; //temperatura máxima;
@@ -133,7 +146,7 @@ public class MainActivity extends ActionBarActivity {
             public void run() {int x=0;
                 imprimir("Hilo de dibujo Arrancado\r\n");
 
-                while(true){ nuevamuestra((float) (25.0+10.0*Math.sin(2.0*Math.PI*(float)(x%360)/360.0)));
+                while(true){ nuevamuestra((float) (Math.random()*10.0+25.0+10.0*Math.sin(2.0*Math.PI*(float)(x%360)/360.0)));
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
@@ -156,6 +169,13 @@ public class MainActivity extends ActionBarActivity {
          w=ll.getWidth();
          h=ll.getHeight();
 */
+
+         Canvas grafica;
+         canvas_visible=(canvas_visible+1)%2;
+            if (canvas_visible==1)
+               grafica=grafica_1;
+            else
+                grafica=grafica_2;
             // borrar esta escalado.
          grafica.drawRect(0, 0, 480, 800, paintwhite);
          float sy= (float) (800.0/(My-my)); // en grados
@@ -163,8 +183,15 @@ public class MainActivity extends ActionBarActivity {
 
          //añadir dato
          buffer[puntero_vector++]=dato;
-         if ((puntero_vector>=3600)) puntero_vector=0;
-         // grafica de lineas no se escala la x
+         if ((puntero_vector>=3600))
+         {
+                imprimirln("Ha finalidado el la peusta de datos");
+                puntero_vector=0;
+         }
+
+      //   if ((puntero_vector%10)==0)
+         {
+             // grafica de lineas no se escala la x
          int t;
          for (t=0;t<3600-1;t++)
          {
@@ -186,19 +213,28 @@ public class MainActivity extends ActionBarActivity {
 
          }
 
+              if (canvas_visible == 1) {
+                  runOnUiThread(new Runnable() {
+                      public void run() {
+                          FrameLayout ll = (FrameLayout) findViewById(R.id.Grafica);
+                          ll.setBackgroundDrawable(BitmapD_1);
+                          // ll.postInvalidate();
 
+                      }
+                  });
 
+              } else {
+                  runOnUiThread(new Runnable() {
+                      public void run() {
+                          FrameLayout ll = (FrameLayout) findViewById(R.id.Grafica);
+                          ll.setBackgroundDrawable(BitmapD_2);
 
-         runOnUiThread(new Runnable() {
-             public void run() {
-                 FrameLayout ll = (FrameLayout) findViewById(R.id.Grafica);
+//                     ll.postInvalidate();
 
-                 ll.postInvalidate();
-
-             }
-         });
-
-
+                      }
+                  });
+              }
+          }
 
 
 
