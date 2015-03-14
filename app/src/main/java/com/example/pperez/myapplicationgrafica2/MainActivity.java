@@ -154,6 +154,18 @@ public class MainActivity extends ActionBarActivity {
                 }
 
                 if (result) {
+                    result = getDeviceSettings();
+                }
+
+                if (result) {
+                    imprimirln("Settings retrieval succeeded");
+                } else {
+                    imprimirln("Settings retrieval failed");
+                }
+
+
+
+                if (result) {
                     result = storeKeyValue("CLAVE", "SOL"); //key, value
                 }
                 if (result) {
@@ -436,6 +448,67 @@ public class MainActivity extends ActionBarActivity {
             imprimirln("La base de datos de USUARIO: \""+dataStoreName+"\" se ha creado con exito");
         return result;
     }
+
+
+    public  boolean getDeviceSettings() {
+
+        boolean result = true;
+        try {
+            Device device = Core.getDefaultClient().getLoggedInDevice();
+            if (device.hasSettings()) {
+                Settings deviceSettings = device.getSettings();
+                imprimirln("\n--Device settings list\n");
+                for (int index = 0; index < deviceSettings.size(); index++) {
+                    Setting setting = deviceSettings.get(index);
+                    if (setting.hasKey() && setting.hasValue()) {
+                        String key = setting.getKey();
+                        String value = setting.getValue();
+                        System.out.println(index+": Key = "+key+"  Value = "+value);
+                    }
+                }
+            } else {
+                imprimirln("Device has not settings root");
+                result = false;
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            result = false;
+        }
+        return result;
+    }
+
+    public boolean DevicestoreKeyValue(String key, String value) {
+
+        boolean result = true;
+        try {
+
+            aqui device en lugar de user
+            User user = Core.getDefaultClient().getLoggedInUser();
+            if (user.hasSettings()) {
+                Setting newEntry = SettingHelper.newSetting(Core.getDefaultClient());
+                newEntry.setKey(key);
+                newEntry.setValue(value);
+
+                Settings newSettings = SettingsHelper.newSettings(Core.getDefaultClient());
+                newSettings.add(newEntry);
+
+                user.getSettings().doAdd(newSettings);
+            } else {
+                imprimirln("User has not settings");
+                result = false;
+            }
+        } catch (Exception e) {
+            System.err.println("EXCEPTION PASUCLA");
+            System.err.println(e.getMessage());
+            result = false;
+        }
+        if (!result) {
+            imprimirln("FlowCore storing key-value failed");
+        }
+        return result;
+
+    }
+
 
     public boolean storeKeyValue(String key, String value) {
 
