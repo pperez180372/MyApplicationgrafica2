@@ -166,10 +166,7 @@ public class MainActivity extends ActionBarActivity {
 
 
                 if (result) {
-                    result = storeKeyValue("CLAVE", "SOL"); //key, value
-                }
-                if (result) {
-                    result = retrieveKeyValue("CLAVE");
+                    result = DevicestoreKeyValue("CLAVE", "SOL"); //key, value
                 }
 
                 if (result) {
