@@ -171,6 +171,16 @@ public class MainActivity extends ActionBarActivity {
                 if (result) {
                     result = retrieveKeyValue("CLAVE");
                 }
+
+                if (result) {
+                    result = getDeviceSettings();
+                }
+
+                if (result) {
+                    imprimirln("Settings retrieval succeeded");
+                } else {
+                    imprimirln("Settings retrieval failed");
+                }
                 /*if (result) {
                     result = removeKeyValueEntry(key);
                 }*/
@@ -481,10 +491,11 @@ public class MainActivity extends ActionBarActivity {
 
         boolean result = true;
         try {
+            Device device = Core.getDefaultClient().getLoggedInDevice();
+            if (device.hasSettings()) {
+                Settings deviceSettings = device.getSettings();
+                imprimirln("\n--Device settings list\n");
 
-            aqui device en lugar de user
-            User user = Core.getDefaultClient().getLoggedInUser();
-            if (user.hasSettings()) {
                 Setting newEntry = SettingHelper.newSetting(Core.getDefaultClient());
                 newEntry.setKey(key);
                 newEntry.setValue(value);
@@ -492,9 +503,9 @@ public class MainActivity extends ActionBarActivity {
                 Settings newSettings = SettingsHelper.newSettings(Core.getDefaultClient());
                 newSettings.add(newEntry);
 
-                user.getSettings().doAdd(newSettings);
+                device.getSettings().doAdd(newSettings);
             } else {
-                imprimirln("User has not settings");
+                imprimirln("Device has not settings");
                 result = false;
             }
         } catch (Exception e) {
