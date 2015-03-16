@@ -116,12 +116,12 @@ public class MainActivity extends ActionBarActivity {
                 String FLOW_SERVER_SECRET="Sd1SVBfYtGfQvUCR";
 
                 String hardwareType 			= "Android";
-                String macAddress 				= "446D6CDAE96C";
-                String serialNumber 			= "40";
+                String macAddress 				= "0092C90943B1";
+                String serialNumber 			= "59";
                 String deviceId 				="";
-                String softwareVersion 			= "40";
-                String deviceName 				= "XXPascualetAndroid";
-                String DeviceRegistrationKey 	= "NXAYIMLCGH";
+                String softwareVersion 			= "41";
+                String deviceName 				= "TabletaA13";
+                String DeviceRegistrationKey 	= "GPMWB7QJ6H";
 
                   boolean result = false;
 
@@ -143,7 +143,7 @@ public class MainActivity extends ActionBarActivity {
                 if (result) {
                     result = getDeviceAoR();
                 }
-
+/*
                 if (result)
                 {
                     result=createDeviceDataStore("almacenamiento_1");
@@ -163,10 +163,10 @@ public class MainActivity extends ActionBarActivity {
                     imprimirln("Settings retrieval failed");
                 }
 
-
+*/
 
                 if (result) {
-                    result = DevicestoreKeyValue("CLAVE", "SOL"); //key, value
+                    result =addSettingToDevice("CLAVE", "SOL"); //key, value
                 }
 
                 if (result) {
@@ -470,7 +470,7 @@ public class MainActivity extends ActionBarActivity {
                     if (setting.hasKey() && setting.hasValue()) {
                         String key = setting.getKey();
                         String value = setting.getValue();
-                        System.out.println(index+": Key = "+key+"  Value = "+value);
+                        imprimirln(index+": Key = "+key+"  Value = "+value);
                     }
                 }
             } else {
@@ -484,39 +484,33 @@ public class MainActivity extends ActionBarActivity {
         return result;
     }
 
-    public boolean DevicestoreKeyValue(String key, String value) {
-
-        boolean result = true;
+   public boolean addSettingToDevice(String key, String value) {
+        boolean result = false;
         try {
             Device device = Core.getDefaultClient().getLoggedInDevice();
-            if (device.hasSettings()) {
-                Settings deviceSettings = device.getSettings();
-                imprimirln("\n--Device settings list\n");
+            if (device != null && device.hasSettings()) {
+                Setting newSetting = SettingHelper.newSetting(Core.getDefaultClient());
+                newSetting.setKey(key);
+                newSetting.setValue(value);
 
-                Setting newEntry = SettingHelper.newSetting(Core.getDefaultClient());
-                newEntry.setKey(key);
-                newEntry.setValue(value);
+                Settings settings = SettingsHelper.newSettings(Core.getDefaultClient());
+                settings.add(newSetting);
 
-                Settings newSettings = SettingsHelper.newSettings(Core.getDefaultClient());
-                newSettings.add(newEntry);
-
-                device.getSettings().doAdd(newSettings);
+                device.getSettings().doAdd(settings);
+                result = true;
             } else {
-                imprimirln("Device has not settings");
+                imprimirln("Error: Device has no settings ");
                 result = false;
             }
         } catch (Exception e) {
-            System.err.println("EXCEPTION PASUCLA");
             System.err.println(e.getMessage());
             result = false;
         }
         if (!result) {
-            imprimirln("FlowCore storing key-value failed");
+           imprimirln("FlowCore addSettingToDevice failed");
         }
         return result;
-
     }
-
 
     public boolean storeKeyValue(String key, String value) {
 
