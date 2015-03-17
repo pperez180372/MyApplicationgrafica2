@@ -139,11 +139,14 @@ public class MainActivity extends ActionBarActivity {
                     result = registerDevice(hardwareType, macAddress, serialNumber,deviceId , softwareVersion, deviceName, DeviceRegistrationKey);
                 }
 
+                if (result) {
+                    result = getFlowAoROfUser();
+                }
 
                 if (result) {
                     result = getDeviceAoR();
                 }
-/*
+
                 if (result)
                 {
                     result=createDeviceDataStore("almacenamiento_1");
@@ -163,7 +166,7 @@ public class MainActivity extends ActionBarActivity {
                     imprimirln("Settings retrieval failed");
                 }
 
-*/
+
 
                 if (result) {
                     result =addSettingToDevice("CLAVE", "SOL"); //key, value
@@ -378,6 +381,24 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
+    public boolean getFlowAoROfUser(){
+
+        boolean result = false;
+        try {
+            User user = Core.getDefaultClient().getLoggedInUser();
+            if (user != null && user.hasFlowMessagingAddress()) {
+                FlowMessagingAddress address = user.getFlowMessagingAddress();
+                String aor = address.getAddress();
+                imprimirln("Flow AoR of user is " + aor);
+                result = true;
+            }
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            result = false;
+        }
+
+        return result;
+    }
 
     boolean getDeviceAoR() {
 
