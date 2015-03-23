@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 
 public class MainActivity_Prod extends ActionBarActivity {
@@ -30,6 +31,37 @@ public class MainActivity_Prod extends ActionBarActivity {
                                     }
                                 }
         );
+        led2.setOnClickListener(new Button.OnClickListener() {
+                                    public void onClick (View arg0) {
+                                        led1.setText("ajaja!");
+                                    }
+                                }
+        );
+        led3.setOnClickListener(new Button.OnClickListener() {
+                                    public void onClick (View arg0) {
+                                        led1.setText("ajaja!");
+                                    }
+                                }
+        );
+        led4.setOnClickListener(new Button.OnClickListener() {
+                                    public void onClick (View arg0) {
+                                        led1.setText("ajaja!");
+                                    }
+                                }
+        );
+        PotAD.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            int progressValue;
+
+            public void onProgressChanged(SeekBar seekBar1, int progress, boolean fromUser){
+
+                progressValue = progress;
+
+                Toast.makeText(getApplicationContext(), "Changing seekbar's progress", Toast.LENGTH_SHORT).show();
+            }
+            public void onStartTrackingTouch(SeekBar seekBar){            }
+            public void onStopTrackingTouch(SeekBar seekBar){            }
+        });
     }
 
 
