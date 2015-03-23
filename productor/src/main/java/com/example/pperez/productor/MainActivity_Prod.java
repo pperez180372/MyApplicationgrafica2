@@ -58,10 +58,11 @@ public class MainActivity_Prod extends ActionBarActivity {
                 progressValue = progress;
 
 
-                Toast.makeText(getApplicationContext(), "Changing seekbar's progress: "+progress, Toast.LENGTH_SHORT).show();
+
             }
             public void onStartTrackingTouch(SeekBar seekBar){            }
-            public void onStopTrackingTouch(SeekBar seekBar){    }
+            public void onStopTrackingTouch(SeekBar seekBar){
+                Toast.makeText(getApplicationContext(), "Changing seekbar's progress: "+progressValue, Toast.LENGTH_SHORT).show();}
         });
     }
 
