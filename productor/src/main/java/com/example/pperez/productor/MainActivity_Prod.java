@@ -4,14 +4,32 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.SeekBar;
 
 
 public class MainActivity_Prod extends ActionBarActivity {
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_activity__prod);
+
+        final Button led1=(Button) findViewById(R.id.LED1);
+        final Button led2=(Button) findViewById(R.id.LED2);
+        final Button led3=(Button) findViewById(R.id.LED3);
+        final Button led4=(Button) findViewById(R.id.LED4);
+        final SeekBar PotAD=(SeekBar) findViewById(R.id.Potenciometro);
+
+        led1.setOnClickListener(new Button.OnClickListener() {
+                                    public void onClick (View arg0) {
+                                        led1.setText("ajaja!");
+                                    }
+                                }
+        );
     }
 
 

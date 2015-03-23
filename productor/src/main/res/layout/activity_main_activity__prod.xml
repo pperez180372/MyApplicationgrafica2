@@ -10,41 +10,49 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
-        <CheckBox
+        <ToggleButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="LED 1"
         android:id="@+id/LED1"
 
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+            android:textOn="LED1"
+            android:textOff="LED1" />
 
-        <CheckBox
+        <ToggleButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="LED 2"
             android:id="@+id/LED2"
 
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:textOff="LED 2"
+            android:textOn="LED 2" />
 
-        <CheckBox
+        <ToggleButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="LED 3"
             android:id="@+id/LED3"
 
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:textOff="LED 3"
+            android:textOn="LED 3" />
 
-        <CheckBox
+        <ToggleButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="LED 4"
             android:id="@+id/LED4"
 
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:textOff="LED 4"
+            android:textOn="LED 4" />
 
         <TextView
             android:layout_width="wrap_content"
