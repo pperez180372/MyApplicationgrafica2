@@ -8,16 +8,17 @@ import android.app.Activity;
 
 import com.example.pperez.myapplicationgrafica2.MainActivity;
 import com.imgtec.flow.FlowHandler;
+import com.imgtec.flow.client.core.API;
 import com.imgtec.flow.client.core.Client;
 import com.imgtec.flow.client.core.Core;
-import com.imgtec.flow.client.core.Setting;
-import com.imgtec.flow.client.core.SettingHelper;
-import com.imgtec.flow.client.core.Settings;
-import com.imgtec.flow.client.core.SettingsHelper;
+import com.imgtec.flow.client.core.Time;
+import com.imgtec.flow.client.core.impl.TimeImpl;
 import com.imgtec.flow.client.flowmessaging.FlowMessagingAddress;
 import com.imgtec.flow.client.users.DataStore;
 import com.imgtec.flow.client.users.Device;
 import com.imgtec.flow.client.users.User;
+
+import java.util.Date;
 
 public class FlowCloud {
 
@@ -336,27 +337,50 @@ public class FlowCloud {
     }
 
 
-    /* añadir item de almacenamiento */
+    // añadir item de almacenamiento
 
-    /* Step 5: Add device DataStore items */
-    importado de C directamente
-    bool AddDeviceDatastoreItems()
+    // Step 5: Add device DataStore items
+    //importado de C directamente
+
+    public static Date getCurrentServerTime() {
+        final Date[] date = {null};
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                API clientAPI = Core.getDefaultClient().getAPI();
+                if (clientAPI.hasTime()) {
+                    Time serverTime = clientAPI.getTime();
+                    if (serverTime.hasCurrentUtcTime()) {
+                        date[0] = serverTime.getCurrentUtcTime();
+                    }
+                }
+            }
+        });
+        thread.start();
+
+        while (date[0] == null) {
+        }
+        return date[0];
+    }
+
+
+
+    boolean AddDeviceDatastoreItems()
     {
-        bool result = false;
-        char dataStoreName[MAX_SIZE];
+        boolean result = false;
+        char[] dataStoreName= new char [100];
+        //TimeImpl tt= new TimeImpl(client) ;
+       // Date tt;//=Time.class.getCurrentUtcTime();
 
-        FlowMemoryManager memoryManager = FlowMemoryManager_New();
-        if (memoryManager)
-        {
 
-            FlowAPI api = FlowClient_GetAPI(memoryManager);
+        Date currentTime=getCurrentServerTime();
 
-            if (FlowAPI_CanRetrieveTime(api))
-            {
-                FlowTime time = FlowAPI_RetrieveTime(api);
-                if (FlowTime_HasCurrentUtcTime(time))
-                {
-                    FlowDatetime currentTime = FlowTime_GetCurrentUtcTime(time);
+        hasta aqui bien....
+
+
+                 FlowDatetime currentTime = getCurrentUtcTime();
+        FlowTime_GetCurrentUtcTime(time);
+
                     struct tm *timeNow;
                     char dateTime[30];
                     timeNow = localtime((FlowDatetime*) &currentTime);
