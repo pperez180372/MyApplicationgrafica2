@@ -12,6 +12,10 @@ import com.imgtec.flow.client.core.API;
 import com.imgtec.flow.client.core.Client;
 import com.imgtec.flow.client.core.Core;
 import com.imgtec.flow.client.core.ResourceCreatedResponse;
+import com.imgtec.flow.client.core.Setting;
+import com.imgtec.flow.client.core.SettingHelper;
+import com.imgtec.flow.client.core.Settings;
+import com.imgtec.flow.client.core.SettingsHelper;
 import com.imgtec.flow.client.core.Time;
 import com.imgtec.flow.client.flowmessaging.FlowMessagingAddress;
 import com.imgtec.flow.client.users.DataStore;
@@ -19,7 +23,6 @@ import com.imgtec.flow.client.users.DataStoreItem;
 import com.imgtec.flow.client.users.DataStoreItems;
 import com.imgtec.flow.client.users.Device;
 import com.imgtec.flow.client.users.User;
-import com.imgtec.flow.client.users.impl.DataStoreItemImpl;
 
 import java.util.Date;
 
@@ -372,7 +375,7 @@ public class FlowCloud {
     // Step 5: Add device DataStore items
     //importado de C directamente
 
-    public  Date getCurrentServerTime() {
+    public  Date getCurrentServerTime1() {
         final Date[] date = {null};
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -404,7 +407,6 @@ public class FlowCloud {
        /* user input for DataStore name */
         imprimirln("Nombre de la base de datos: "+DATASTORENAME);
 
-
         Device device = Core.getDefaultClient().getLoggedInDevice();
         DataStore datastore = device.getDataStore(DATASTORENAME);
 
@@ -414,7 +416,10 @@ public class FlowCloud {
             if (!dataStoreItems.isEmpty())
             {
 
-                DataStoreItemImpl newItem = new DataStoreItemImpl(d,Core.getDefaultClient().getLoggedInDevice());
+                //DataStoreItemHelper newItem=new DataStoreItemHelper();
+                 //newItem.newDataStoreItem(Core.getDefaultClient());
+                DataStoreItem newItem=dataStoreItems.newItem();
+
                 if (newItem!=null)
                 {
                     String itemContent="<HeartBeat><ReadingTime type=\"datetime\">"+currentTime.toString()+"</ReadingTime><Reading type=\"integer\">%d</Reading></HeartBeat>";
@@ -429,7 +434,7 @@ public class FlowCloud {
                     else
                      {
                         imprimirln("Data Store item add failed\n\r");
-                        imprimirln("ERROR: code Flow_GetLastError());";
+                        imprimirln("ERROR: code Flow_GetLastError());");
                      }
                             }
                             else
@@ -609,8 +614,4 @@ public class FlowCloud {
         return result;
 
     }
-
-
-
-
 }

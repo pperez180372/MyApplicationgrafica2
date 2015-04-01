@@ -92,6 +92,7 @@
     <orderEntry type="library" exported="" name="mips" level="project" />
     <orderEntry type="library" exported="" name="flowws" level="project" />
     <orderEntry type="library" exported="" name="flow" level="project" />
+    <orderEntry type="module" module-name="Comun" />
   </component>
 </module>
 

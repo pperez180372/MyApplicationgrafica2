@@ -11,9 +11,6 @@ import android.widget.Toast;
 
 
 public class MainActivity_Prod extends ActionBarActivity {
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
