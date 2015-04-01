@@ -11,12 +11,15 @@ import com.imgtec.flow.FlowHandler;
 import com.imgtec.flow.client.core.API;
 import com.imgtec.flow.client.core.Client;
 import com.imgtec.flow.client.core.Core;
+import com.imgtec.flow.client.core.ResourceCreatedResponse;
 import com.imgtec.flow.client.core.Time;
-import com.imgtec.flow.client.core.impl.TimeImpl;
 import com.imgtec.flow.client.flowmessaging.FlowMessagingAddress;
 import com.imgtec.flow.client.users.DataStore;
+import com.imgtec.flow.client.users.DataStoreItem;
+import com.imgtec.flow.client.users.DataStoreItems;
 import com.imgtec.flow.client.users.Device;
 import com.imgtec.flow.client.users.User;
+import com.imgtec.flow.client.users.impl.DataStoreItemImpl;
 
 import java.util.Date;
 
@@ -364,92 +367,88 @@ public class FlowCloud {
     }
 
 
+    // añadir item de almacenamiento
 
-    boolean AddDeviceDatastoreItems()
+    // Step 5: Add device DataStore items
+    //importado de C directamente
+
+    public  Date getCurrentServerTime() {
+        final Date[] date = {null};
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                API clientAPI = Core.getDefaultClient().getAPI();
+                if (clientAPI.hasTime()) {
+                    Time serverTime = clientAPI.getTime();
+                    if (serverTime.hasCurrentUtcTime()) {
+                        date[0] = serverTime.getCurrentUtcTime();
+                    }
+                }
+            }
+        });
+        thread.start();
+
+        while (date[0] == null) {
+        }
+        return date[0];
+    }
+
+
+
+    public void AddDeviceDatastoreItems(String DATASTORENAME)
     {
         boolean result = false;
-        char[] dataStoreName= new char [100];
-        //TimeImpl tt= new TimeImpl(client) ;
-       // Date tt;//=Time.class.getCurrentUtcTime();
-
-
         Date currentTime=getCurrentServerTime();
+        //API clientAPI = Core.getDefaultClient().getAPI();
+        //Time serverTime = (Time) clientAPI.getTime().getCurrentUtcTime();
+       /* user input for DataStore name */
+        imprimirln("Nombre de la base de datos: "+DATASTORENAME);
 
-        hasta aqui bien....
 
+        Device device = Core.getDefaultClient().getLoggedInDevice();
+        DataStore datastore = device.getDataStore(DATASTORENAME);
 
-                 FlowDatetime currentTime = getCurrentUtcTime();
-        FlowTime_GetCurrentUtcTime(time);
+        if (datastore!=null)
+        {
+            DataStoreItems dataStoreItems = datastore.getItems();
+            if (!dataStoreItems.isEmpty())
+            {
 
-                    struct tm *timeNow;
-                    char dateTime[30];
-                    timeNow = localtime((FlowDatetime*) &currentTime);
-                    strftime(dateTime, 25, "%c", timeNow);
-                    FlowDevice device = FlowClient_GetLoggedInDevice(memoryManager);
+                DataStoreItemImpl newItem = new DataStoreItemImpl(d,Core.getDefaultClient().getLoggedInDevice());
+                if (newItem!=null)
+                {
+                    String itemContent="<HeartBeat><ReadingTime type=\"datetime\">"+currentTime.toString()+"</ReadingTime><Reading type=\"integer\">%d</Reading></HeartBeat>";
+                    newItem.setContent(itemContent);
+                    ResourceCreatedResponse res = dataStoreItems.addItem(newItem);
 
-                                /* user input for DataStore name */
-                    printf("Enter the name of the data store to add an item to: ");
-                    scanf("%s", dataStoreName);
-
-                                /*
-                                 * DataStore name is the name of one of device's Data Stores
-                                 * (the Data Store gets created automatically when adding the first item)
-                                 */
-                    FlowDataStore dataStore = FlowDevice_RetrieveDataStore(device, dataStoreName);
-                    if (dataStore)
+                    if (res.hasID())
                     {
-                        FlowDataStoreItems dataStoreItems = FlowDataStore_RetrieveItems(dataStore, 0);
-                        if (dataStoreItems)
-                        {
-                            FlowDataStoreItem newDataStoreItem = FlowDataStoreItem_New(memoryManager);
-                            if (newDataStoreItem)
-                            {
-                                char itemContent[MAX_SIZE];
-                                sprintf(itemContent, "<HeartBeat><ReadingTime type=\"datetime\">"
-                                        "%04d-%02d-%02dT%02d:%02d:%02dZ</ReadingTime><Reading type=\"integer\">%d</Reading></HeartBeat>", timeNow->tm_year + 1900, timeNow->tm_mon + 1, timeNow->tm_mday,
-                                        timeNow->tm_hour, timeNow->tm_min, timeNow->tm_sec, timeNow->tm_sec + 60);
-
-                                FlowDataStoreItem_SetContent(newDataStoreItem, itemContent);
-                                FlowResourceCreatedResponse dataStoreCreateResponse = FlowDataStoreItems_AddItem(dataStoreItems, newDataStoreItem);
-                                if (dataStoreCreateResponse)
-                                {
-                                    result = true;
-                                    printf("Data Store created and added successfully\n\r");
-                                }
-                                else
-                                {
-                                    printf("Data Store item add failed\n\r");
-                                    printf("ERROR: code %d\n\r", Flow_GetLastError());
-                                }
+                        result = true;
+                        imprimirln("Data Store created and added successfully");
+                    }
+                    else
+                     {
+                        imprimirln("Data Store item add failed\n\r");
+                        imprimirln("ERROR: code Flow_GetLastError());";
+                     }
                             }
                             else
                             {
-                                printf("Couldn't create a new DataStore item\n\r");
+                                imprimirln("Couldn't create a new DataStore item\n\r");
                             }
                         }
                         else
                         {
-                            printf("Couldn't retrieve dataStoreItems collection\n\r");
-                            printf("ERROR: code %d\n\r", Flow_GetLastError());
+                            imprimirln("Couldn't retrieve dataStoreItems collection\n\r");
+                            imprimirln("ERROR: code %d\n\r, Flow_GetLastError());");
                         }
                     }
                     else
                     {
-                        printf("Couldn't retrieve dataStore collection\n\r");
-                        printf("ERROR: code %d\n\r", Flow_GetLastError());
+                        imprimirln("Couldn't retrieve dataStore collection\n\r");
+                        imprimirln("ERROR: code %d\n\r, Flow_GetLastError());");
                     }
                 }
-            }
-                /*Clearing Memory*/
-            FlowMemoryManager_Free(&memoryManager);
-        }
-        else
-        {
-            printf("Flow Could not create a FlowMemoryManager for managing memory\n\r");
-            printf("ERROR: code %d\n\r", Flow_GetLastError());
-        }
-        return result;
-    }
 
 
 
