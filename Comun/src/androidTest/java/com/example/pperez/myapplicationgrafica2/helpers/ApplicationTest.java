@@ -1,4 +1,4 @@
-package com.example.pperez.helpers;
+package com.example.pperez.myapplicationgrafica2.helpers;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

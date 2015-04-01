@@ -1,4 +1,4 @@
-package com.example.pperez.helpers;
+package com.example.pperez.myapplicationgrafica2;
 
 /**
  * Created by pperez on 24/03/15.
@@ -6,7 +6,6 @@ package com.example.pperez.helpers;
 
 import android.app.Activity;
 
-import com.example.pperez.myapplicationgrafica2.MainActivity;
 import com.imgtec.flow.FlowHandler;
 import com.imgtec.flow.client.core.API;
 import com.imgtec.flow.client.core.Client;

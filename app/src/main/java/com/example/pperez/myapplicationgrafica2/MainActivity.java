@@ -14,8 +14,6 @@ import android.widget.FrameLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.example.pperez.helpers.FlowCloud;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
